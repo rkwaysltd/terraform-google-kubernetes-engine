@@ -99,13 +99,18 @@ variable "http_load_balancing" {
 variable "network_policy" {
   type        = bool
   description = "Enable network policy addon"
-  default     = true
+  default     = false
 }
 
 variable "network_policy_provider" {
   type        = string
   description = "The network policy provider."
   default     = "CALICO"
+}
+variable "datapath_provider" {
+  type        = string
+  description = "The desired datapath provider for this cluster. By default, uses the IPTables-based kube-proxy implementation."
+  default     = "DATAPATH_PROVIDER_UNSPECIFIED"
 }
 
 variable "maintenance_start_time" {
@@ -346,10 +351,10 @@ variable "grant_registry_access" {
   default     = false
 }
 
-variable "registry_project_id" {
-  type        = string
-  description = "Project holding the Google Container Registry. If empty, we use the cluster project. If grant_registry_access is true, storage.objectViewer role is assigned on this project."
-  default     = ""
+variable "registry_project_ids" {
+  type        = list(string)
+  description = "Projects holding Google Container Registries. If empty, we use the cluster project. If a service account is created and the `grant_registry_access` variable is set to `true`, the `storage.objectViewer` role is assigned on these projects."
+  default     = []
 }
 
 variable "service_account" {
@@ -560,6 +565,18 @@ variable "gcloud_upgrade" {
   type        = bool
   description = "Whether to upgrade gcloud at runtime"
   default     = false
+}
+
+variable "add_shadow_firewall_rules" {
+  type        = bool
+  description = "Create GKE shadow firewall (the same as default firewall rules with firewall logs enabled)."
+  default     = false
+}
+
+variable "shadow_firewall_rules_priority" {
+  type        = number
+  description = "The firewall priority of GKE shadow firewall rules. The priority should be less than default firewall, which is 1000."
+  default     = 999
 }
 
 variable "disable_default_snat" {

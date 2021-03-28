@@ -49,7 +49,7 @@ resource "google_container_cluster" "primary" {
     }
   }
 
-  subnetwork = "projects/${local.network_project_id}/regions/${var.region}/subnetworks/${var.subnetwork}"
+  subnetwork = "projects/${local.network_project_id}/regions/${local.region}/subnetworks/${var.subnetwork}"
 
   default_snat_status {
     disabled = var.disable_default_snat
@@ -172,6 +172,7 @@ resource "google_container_cluster" "primary" {
       enabled = var.config_connector
     }
   }
+  datapath_provider = var.datapath_provider
 
   networking_mode = "VPC_NATIVE"
   ip_allocation_policy {
